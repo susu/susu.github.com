@@ -37,7 +37,7 @@ vim.
 
 Add to your ```.vimrc```:
 
-```
+```vim
 Bundle 'Valloric/YouCompleteMe'
 ```
 And run:

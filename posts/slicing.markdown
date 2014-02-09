@@ -8,7 +8,7 @@ C++ has many pitfall. Developers should be aware of them.
 One of the pitfalls is **slicing.**
 Instead of giving a proper definition, I show it by example:
 
-```
+```c++
 ...
 class Animal
 {
@@ -52,7 +52,7 @@ anyway?)
 Then you may say: "okay, but why the heck should I declare a Dog and then copy it to
 Animal?" And you are right. But check the following:
 
-```
+```c++
 class Person
 {
   public:
@@ -75,7 +75,7 @@ Or, even imagine it in a more messy context ...
 Okay, I don't want to let it happen. Let's delete the Animal's constructor with Dog
 parameter (C++11. In C++03 you could make it private, and not give a definition).
 
-```
+```c++
 class Dog;
 
 class Animal
@@ -109,7 +109,7 @@ slicing.cpp:28:10: error:   initializing argument 1 of ‘void Person::feed(Anim
 
 Now, add a new animal to my farm:
 
-```
+```c++
 class Cat
 {
   public:
@@ -122,7 +122,7 @@ class Cat
 
 Oh-oh, but to avoid slicing with ```Cat``` I need to open my base class:
 
-```
+```c++
 class Animal
 {
   public:
@@ -142,7 +142,7 @@ So then, what should I do in order to avoid slicing?
 
 If you can modify the base class, you can disable every copying:
 
-```
+```c++
 class Animal
 {
   public:

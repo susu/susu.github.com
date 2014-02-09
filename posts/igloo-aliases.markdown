@@ -9,7 +9,7 @@ alternate syntax for defining a context or a spec:
 
 Until now I've written my tests similarly:
 
-```
+```c++
 
 Context(an_XXX)
 {
@@ -24,7 +24,7 @@ Context(an_XXX)
 But from now:
 
 
-```
+```c++
 
 Describe(an_XXX)
 {
