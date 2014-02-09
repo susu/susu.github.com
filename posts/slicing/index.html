@@ -1,33 +1,33 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><link rel="icon" type="image/png" href="/images/cabin.png"><link href="/styles/main.css" rel="stylesheet"><title>Slicing</title></head><body><nav><h1 class="name"><a href="/">Fragmented thoughts</a></h1><div class="menu icon-menu"></div><ul class="nav-links"><li class="text-link"><a href="/about.html">about</a></li><!-- li.text-link--><!--   a(href="#{data.baseUrl}projects.html") projects--><li class="text-link"><a href="/archives.html">archives</a></li></ul><div class="social-media"><a href="https://github.com/susu" class="icon-github"></a><!-- a.icon-twitter(href="https://twitter.com/colinwrenca")--></div></nav><div class="content"><div class="post-head group"><a href="/posts/slicing/"><h1 class="post-title">Slicing</h1></a><span class="post-date">2013 &#183; 2 &#183; 11</span></div><div class="post-body markdown"><p>C++ has many pitfall. Developers should be aware of them.
 One of the pitfalls is <strong>slicing.</strong>
 Instead of giving a proper definition, I show it by example:</p>
-<pre><code><div class="highlight"><pre><span class="p">...</span>
-<span class="kr">class</span> <span class="nx">Animal</span>
+<pre><code class="lang-c++"><div class="highlight"><pre><span class="p">...</span>
+<span class="k">class</span> <span class="nc">Animal</span>
 <span class="p">{</span>
-  <span class="kr">public</span><span class="o">:</span>
-    <span class="nx">virtual</span> <span class="k">void</span> <span class="nx">eat</span><span class="p">()</span>
+  <span class="nl">public:</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">eat</span><span class="p">()</span>
     <span class="p">{</span>
-      <span class="nx">std</span><span class="o">::</span><span class="nx">cout</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;Animal: eat!&quot;</span> <span class="o">&lt;&lt;</span> <span class="nx">std</span><span class="o">::</span><span class="nx">endl</span><span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Animal: eat!&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">};</span>
 
-<span class="kr">class</span> <span class="nx">Dog</span> <span class="o">:</span> <span class="kr">public</span> <span class="nx">Animal</span>
+<span class="k">class</span> <span class="nc">Dog</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Animal</span>
 <span class="p">{</span>
-  <span class="kr">public</span><span class="o">:</span>
-    <span class="nx">virtual</span> <span class="k">void</span> <span class="nx">eat</span><span class="p">()</span>
+  <span class="nl">public:</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">eat</span><span class="p">()</span>
     <span class="p">{</span>
-      <span class="nx">std</span><span class="o">::</span><span class="nx">cout</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;Dog: wrrrr, yummm!&quot;</span> <span class="o">&lt;&lt;</span> <span class="nx">std</span><span class="o">::</span><span class="nx">endl</span><span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Dog: wrrrr, yummm!&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">};</span>
 
 
 <span class="c1">// ... a few lines later ...</span>
 
-<span class="nx">Dog</span> <span class="nx">frakk</span><span class="p">;</span>
-<span class="nx">frakk</span><span class="p">.</span><span class="nx">eat</span><span class="p">();</span>
+<span class="n">Dog</span> <span class="n">frakk</span><span class="p">;</span>
+<span class="n">frakk</span><span class="p">.</span><span class="n">eat</span><span class="p">();</span>
 
-<span class="nx">Animal</span> <span class="nx">anim</span> <span class="o">=</span> <span class="nx">frakk</span><span class="p">;</span>
-<span class="nx">anim</span><span class="p">.</span><span class="nx">eat</span><span class="p">();</span>
+<span class="n">Animal</span> <span class="n">anim</span> <span class="o">=</span> <span class="n">frakk</span><span class="p">;</span>
+<span class="n">anim</span><span class="p">.</span><span class="n">eat</span><span class="p">();</span>
 </pre></div>
 </code></pre>
 <p>Output of the code:</p>
@@ -41,44 +41,44 @@ implicitly casted to Animal. (<a href="http://en.wikipedia.org/wiki/Frakk">What<
 anyway?)</p>
 <p>Then you may say: &quot;okay, but why the heck should I declare a Dog and then copy it to
 Animal?&quot; And you are right. But check the following:</p>
-<pre><code><div class="highlight"><pre><span class="kr">class</span> <span class="nx">Person</span>
+<pre><code class="lang-c++"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Person</span>
 <span class="p">{</span>
-  <span class="kr">public</span><span class="o">:</span>
-    <span class="k">void</span> <span class="nx">feed</span><span class="p">(</span><span class="nx">Animal</span> <span class="nx">a</span><span class="p">)</span>
+  <span class="nl">public:</span>
+    <span class="kt">void</span> <span class="n">feed</span><span class="p">(</span><span class="n">Animal</span> <span class="n">a</span><span class="p">)</span>
     <span class="p">{</span>
-      <span class="nx">a</span><span class="p">.</span><span class="nx">eat</span><span class="p">();</span>
+      <span class="n">a</span><span class="p">.</span><span class="n">eat</span><span class="p">();</span>
     <span class="p">}</span>
 <span class="p">};</span>
 
 <span class="p">...</span>
-<span class="nx">Dog</span> <span class="nx">frakk</span><span class="p">;</span>
+<span class="n">Dog</span> <span class="n">frakk</span><span class="p">;</span>
 
-<span class="nx">Person</span> <span class="nx">me</span><span class="p">;</span>
-<span class="nx">me</span><span class="p">.</span><span class="nx">feed</span><span class="p">(</span><span class="nx">frakk</span><span class="p">);</span>
+<span class="n">Person</span> <span class="n">me</span><span class="p">;</span>
+<span class="n">me</span><span class="p">.</span><span class="n">feed</span><span class="p">(</span><span class="n">frakk</span><span class="p">);</span>
 </pre></div>
 </code></pre>
 <p>Or, even imagine it in a more messy context ...</p>
 <p>Okay, I don&#39;t want to let it happen. Let&#39;s delete the Animal&#39;s constructor with Dog
 parameter (C++11. In C++03 you could make it private, and not give a definition).</p>
-<pre><code><div class="highlight"><pre><span class="kr">class</span> <span class="nx">Dog</span><span class="p">;</span>
+<pre><code class="lang-c++"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Dog</span><span class="p">;</span>
 
-<span class="kr">class</span> <span class="nx">Animal</span>
+<span class="k">class</span> <span class="nc">Animal</span>
 <span class="p">{</span>
-  <span class="kr">public</span><span class="o">:</span>
-    <span class="nx">Animal</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
-    <span class="nx">Animal</span><span class="p">(</span><span class="nx">Dog</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
-    <span class="nx">virtual</span> <span class="k">void</span> <span class="nx">eat</span><span class="p">()</span>
+  <span class="nl">public:</span>
+    <span class="n">Animal</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">Animal</span><span class="p">(</span><span class="n">Dog</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">eat</span><span class="p">()</span>
     <span class="p">{</span>
-      <span class="nx">std</span><span class="o">::</span><span class="nx">cout</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;Animal: eat!&quot;</span> <span class="o">&lt;&lt;</span> <span class="nx">std</span><span class="o">::</span><span class="nx">endl</span><span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Animal: eat!&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">};</span>
 
-<span class="kr">class</span> <span class="nx">Dog</span> <span class="o">:</span> <span class="kr">public</span> <span class="nx">Animal</span>
+<span class="k">class</span> <span class="nc">Dog</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Animal</span>
 <span class="p">{</span>
-  <span class="kr">public</span><span class="o">:</span>
-    <span class="nx">virtual</span> <span class="k">void</span> <span class="nx">eat</span><span class="p">()</span>
+  <span class="nl">public:</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">eat</span><span class="p">()</span>
     <span class="p">{</span>
-      <span class="nx">std</span><span class="o">::</span><span class="nx">cout</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;Dog: wrrrr, yummm!&quot;</span> <span class="o">&lt;&lt;</span> <span class="nx">std</span><span class="o">::</span><span class="nx">endl</span><span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Dog: wrrrr, yummm!&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">};</span>
 </pre></div>
@@ -90,23 +90,23 @@ parameter (C++11. In C++03 you could make it private, and not give a definition)
 </pre></div>
 </code></pre>
 <p>Now, add a new animal to my farm:</p>
-<pre><code><div class="highlight"><pre><span class="kr">class</span> <span class="nx">Cat</span>
+<pre><code class="lang-c++"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Cat</span>
 <span class="p">{</span>
-  <span class="kr">public</span><span class="o">:</span>
-    <span class="nx">virtual</span> <span class="k">void</span> <span class="nx">eat</span><span class="p">()</span>
+  <span class="nl">public:</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">eat</span><span class="p">()</span>
     <span class="p">{</span>
-      <span class="nx">std</span><span class="o">::</span><span class="nx">cout</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;Mmmm, fine little mice!&quot;</span> <span class="o">&lt;&lt;</span> <span class="nx">std</span><span class="o">::</span><span class="nx">endl</span><span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Mmmm, fine little mice!&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">};</span>
 </pre></div>
 </code></pre>
 <p>Oh-oh, but to avoid slicing with <code>Cat</code> I need to open my base class:</p>
-<pre><code><div class="highlight"><pre><span class="kr">class</span> <span class="nx">Animal</span>
+<pre><code class="lang-c++"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Animal</span>
 <span class="p">{</span>
-  <span class="kr">public</span><span class="o">:</span>
-    <span class="nx">Animal</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
-    <span class="nx">Animal</span><span class="p">(</span><span class="nx">Dog</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
-    <span class="nx">Animal</span><span class="p">(</span><span class="nx">Cat</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
+  <span class="nl">public:</span>
+    <span class="n">Animal</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">Animal</span><span class="p">(</span><span class="n">Dog</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
+    <span class="n">Animal</span><span class="p">(</span><span class="n">Cat</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
 <span class="p">...</span>
 </pre></div>
 </code></pre>
@@ -116,11 +116,11 @@ parameter (C++11. In C++03 you could make it private, and not give a definition)
 modify it.)</p>
 <p>So then, what should I do in order to avoid slicing?</p>
 <p>If you can modify the base class, you can disable every copying:</p>
-<pre><code><div class="highlight"><pre><span class="kr">class</span> <span class="nx">Animal</span>
+<pre><code class="lang-c++"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Animal</span>
 <span class="p">{</span>
-  <span class="kr">public</span><span class="o">:</span>
-    <span class="nx">Animal</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
-    <span class="nx">Animal</span><span class="p">(</span><span class="nx">Animal</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
+  <span class="nl">public:</span>
+    <span class="n">Animal</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">Animal</span><span class="p">(</span><span class="n">Animal</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
 <span class="p">...</span>
 </pre></div>
 </code></pre>

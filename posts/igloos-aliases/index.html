@@ -1,24 +1,24 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><link rel="icon" type="image/png" href="/images/cabin.png"><link href="/styles/main.css" rel="stylesheet"><title>igloo's aliases</title></head><body><nav><h1 class="name"><a href="/">Fragmented thoughts</a></h1><div class="menu icon-menu"></div><ul class="nav-links"><li class="text-link"><a href="/about.html">about</a></li><!-- li.text-link--><!--   a(href="#{data.baseUrl}projects.html") projects--><li class="text-link"><a href="/archives.html">archives</a></li></ul><div class="social-media"><a href="https://github.com/susu" class="icon-github"></a><!-- a.icon-twitter(href="https://twitter.com/colinwrenca")--></div></nav><div class="content"><div class="post-head group"><a href="/posts/igloos-aliases/"><h1 class="post-title">igloo's aliases</h1></a><span class="post-date">2013 &#183; 1 &#183; 15</span></div><div class="post-body markdown"><p>Todays I&#39;ve discovered that in <a href="http://igloo-testing.org/">igloo</a> you can use
 alternate syntax for defining a context or a spec:</p>
 <p>Until now I&#39;ve written my tests similarly:</p>
-<pre><code><div class="highlight"><pre><span class="nx">Context</span><span class="p">(</span><span class="nx">an_XXX</span><span class="p">)</span>
+<pre><code class="lang-c++"><div class="highlight"><pre><span class="n">Context</span><span class="p">(</span><span class="n">an_XXX</span><span class="p">)</span>
 <span class="p">{</span>
-  <span class="nx">Spec</span><span class="p">(</span><span class="nx">it_should_blabla_if_method_is_called</span><span class="p">)</span>
+  <span class="n">Spec</span><span class="p">(</span><span class="n">it_should_blabla_if_method_is_called</span><span class="p">)</span>
   <span class="p">{</span>
-    <span class="nx">AssertThat</span><span class="p">(</span><span class="nx">xxx</span><span class="p">.</span><span class="nx">method</span><span class="p">(),</span> <span class="nx">Is</span><span class="p">().</span><span class="nx">EqualTo</span><span class="p">(</span><span class="s2">&quot;blabla&quot;</span><span class="p">));</span>
+    <span class="n">AssertThat</span><span class="p">(</span><span class="n">xxx</span><span class="p">.</span><span class="n">method</span><span class="p">(),</span> <span class="n">Is</span><span class="p">().</span><span class="n">EqualTo</span><span class="p">(</span><span class="s">&quot;blabla&quot;</span><span class="p">));</span>
   <span class="p">}</span>
-  <span class="nx">XXX</span> <span class="nx">xxx</span><span class="p">;</span>
+  <span class="n">XXX</span> <span class="n">xxx</span><span class="p">;</span>
 <span class="p">};</span>
 </pre></div>
 </code></pre>
 <p>But from now:</p>
-<pre><code><div class="highlight"><pre><span class="nx">Describe</span><span class="p">(</span><span class="nx">an_XXX</span><span class="p">)</span>
+<pre><code class="lang-c++"><div class="highlight"><pre><span class="n">Describe</span><span class="p">(</span><span class="n">an_XXX</span><span class="p">)</span>
 <span class="p">{</span>
-  <span class="nx">It</span><span class="p">(</span><span class="nx">should_blabla_if_method_is_called</span><span class="p">)</span>
+  <span class="n">It</span><span class="p">(</span><span class="n">should_blabla_if_method_is_called</span><span class="p">)</span>
   <span class="p">{</span>
-    <span class="nx">AssertThat</span><span class="p">(</span><span class="nx">xxx</span><span class="p">.</span><span class="nx">method</span><span class="p">(),</span> <span class="nx">Is</span><span class="p">().</span><span class="nx">EqualTo</span><span class="p">(</span><span class="s2">&quot;blabla&quot;</span><span class="p">));</span>
+    <span class="n">AssertThat</span><span class="p">(</span><span class="n">xxx</span><span class="p">.</span><span class="n">method</span><span class="p">(),</span> <span class="n">Is</span><span class="p">().</span><span class="n">EqualTo</span><span class="p">(</span><span class="s">&quot;blabla&quot;</span><span class="p">));</span>
   <span class="p">}</span>
-  <span class="nx">XXX</span> <span class="nx">xxx</span><span class="p">;</span>
+  <span class="n">XXX</span> <span class="n">xxx</span><span class="p">;</span>
 <span class="p">};</span>
 </pre></div>
 </code></pre>
