@@ -65,6 +65,8 @@ cd ~/.vim/bundle/YouCompleteMe
 (It may take you awhile...drink a coffee or create more unit tests for your code!)
 - - -
 
+## Setting up for a project ##
+
 In order to use YCM in a project, you have to set the compiler flags (especially include paths, but the same warning
 flags are useful as well). Since clang's flags are compatible with GCC's, you can use GCC flags.
 
@@ -82,5 +84,19 @@ The workaround: add to .vimrc:
 ```vim
 let g:ycm_confirm_extra_conf = 0
 ```
+
+## Syntastic ##
+
+[Syntastic](https://github.com/scrooloose/syntastic) is a real-time syntax checker. YouCompleteMe integrates very
+well with Syntastic.
+
+You can install with Vundle:
+
+```
+Bundle 'scrooloose/syntastic'
+```
+
+Compile flags in ```.ycm_extra_conf.py``` must be set precisely if you want to avoid false positives/negatives.
+
 
 
