@@ -1,0 +1,147 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><link rel="icon" type="image/png" href="/images/cabin.png"><link href="/styles/main.css" rel="stylesheet"><title>Slicing</title></head><body><nav><h1 class="name"><a href="/">Fragmented thoughts</a></h1><div class="menu icon-menu"></div><ul class="nav-links"><li class="text-link"><a href="/about.html">about</a></li><!-- li.text-link--><!--   a(href="#{data.baseUrl}projects.html") projects--><li class="text-link"><a href="/archives.html">archives</a></li></ul><div class="social-media"><a href="https://github.com/susu" class="icon-github"></a><!-- a.icon-twitter(href="https://twitter.com/colinwrenca")--></div></nav><div class="content"><div class="post-head group"><a href="/posts/slicing/"><h1 class="post-title">Slicing</h1></a><span class="post-date">2013 &#183; 2 &#183; 11</span></div><div class="post-body markdown"><p>C++ has many pitfall. Developers should be aware of them.
+One of the pitfalls is <strong>slicing.</strong>
+Instead of giving a proper definition, I show it by example:</p>
+<pre><code><div class="highlight"><pre><span class="p">...</span>
+<span class="kr">class</span> <span class="nx">Animal</span>
+<span class="p">{</span>
+  <span class="kr">public</span><span class="o">:</span>
+    <span class="nx">virtual</span> <span class="k">void</span> <span class="nx">eat</span><span class="p">()</span>
+    <span class="p">{</span>
+      <span class="nx">std</span><span class="o">::</span><span class="nx">cout</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;Animal: eat!&quot;</span> <span class="o">&lt;&lt;</span> <span class="nx">std</span><span class="o">::</span><span class="nx">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kr">class</span> <span class="nx">Dog</span> <span class="o">:</span> <span class="kr">public</span> <span class="nx">Animal</span>
+<span class="p">{</span>
+  <span class="kr">public</span><span class="o">:</span>
+    <span class="nx">virtual</span> <span class="k">void</span> <span class="nx">eat</span><span class="p">()</span>
+    <span class="p">{</span>
+      <span class="nx">std</span><span class="o">::</span><span class="nx">cout</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;Dog: wrrrr, yummm!&quot;</span> <span class="o">&lt;&lt;</span> <span class="nx">std</span><span class="o">::</span><span class="nx">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+
+<span class="c1">// ... a few lines later ...</span>
+
+<span class="nx">Dog</span> <span class="nx">frakk</span><span class="p">;</span>
+<span class="nx">frakk</span><span class="p">.</span><span class="nx">eat</span><span class="p">();</span>
+
+<span class="nx">Animal</span> <span class="nx">anim</span> <span class="o">=</span> <span class="nx">frakk</span><span class="p">;</span>
+<span class="nx">anim</span><span class="p">.</span><span class="nx">eat</span><span class="p">();</span>
+</pre></div>
+</code></pre>
+<p>Output of the code:</p>
+<pre><code><div class="highlight"><pre><span class="nx">Dog</span><span class="o">:</span> <span class="nx">wrrrr</span><span class="p">,</span> <span class="nx">yummm</span><span class="o">!</span>
+<span class="nx">Animal</span><span class="o">:</span> <span class="nx">eat</span><span class="o">!</span>
+</pre></div>
+</code></pre>
+<p>Whaat? Where we have created an <code>Animal</code> instance?
+Well, yes we did. When we created the <code>anim</code> variable the <code>frakk</code> has been
+implicitly casted to Animal. (<a href="http://en.wikipedia.org/wiki/Frakk">What</a> is frakk
+anyway?)</p>
+<p>Then you may say: &quot;okay, but why the heck should I declare a Dog and then copy it to
+Animal?&quot; And you are right. But check the following:</p>
+<pre><code><div class="highlight"><pre><span class="kr">class</span> <span class="nx">Person</span>
+<span class="p">{</span>
+  <span class="kr">public</span><span class="o">:</span>
+    <span class="k">void</span> <span class="nx">feed</span><span class="p">(</span><span class="nx">Animal</span> <span class="nx">a</span><span class="p">)</span>
+    <span class="p">{</span>
+      <span class="nx">a</span><span class="p">.</span><span class="nx">eat</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="p">...</span>
+<span class="nx">Dog</span> <span class="nx">frakk</span><span class="p">;</span>
+
+<span class="nx">Person</span> <span class="nx">me</span><span class="p">;</span>
+<span class="nx">me</span><span class="p">.</span><span class="nx">feed</span><span class="p">(</span><span class="nx">frakk</span><span class="p">);</span>
+</pre></div>
+</code></pre>
+<p>Or, even imagine it in a more messy context ...</p>
+<p>Okay, I don&#39;t want to let it happen. Let&#39;s delete the Animal&#39;s constructor with Dog
+parameter (C++11. In C++03 you could make it private, and not give a definition).</p>
+<pre><code><div class="highlight"><pre><span class="kr">class</span> <span class="nx">Dog</span><span class="p">;</span>
+
+<span class="kr">class</span> <span class="nx">Animal</span>
+<span class="p">{</span>
+  <span class="kr">public</span><span class="o">:</span>
+    <span class="nx">Animal</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="nx">Animal</span><span class="p">(</span><span class="nx">Dog</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
+    <span class="nx">virtual</span> <span class="k">void</span> <span class="nx">eat</span><span class="p">()</span>
+    <span class="p">{</span>
+      <span class="nx">std</span><span class="o">::</span><span class="nx">cout</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;Animal: eat!&quot;</span> <span class="o">&lt;&lt;</span> <span class="nx">std</span><span class="o">::</span><span class="nx">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kr">class</span> <span class="nx">Dog</span> <span class="o">:</span> <span class="kr">public</span> <span class="nx">Animal</span>
+<span class="p">{</span>
+  <span class="kr">public</span><span class="o">:</span>
+    <span class="nx">virtual</span> <span class="k">void</span> <span class="nx">eat</span><span class="p">()</span>
+    <span class="p">{</span>
+      <span class="nx">std</span><span class="o">::</span><span class="nx">cout</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;Dog: wrrrr, yummm!&quot;</span> <span class="o">&lt;&lt;</span> <span class="nx">std</span><span class="o">::</span><span class="nx">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</code></pre>
+<p>Cool, now my compiler is claiming about:</p>
+<pre><code><div class="highlight"><pre><span class="nx">slicing</span><span class="p">.</span><span class="nx">cpp</span><span class="o">:</span><span class="mi">47</span><span class="o">:</span><span class="mi">15</span><span class="o">:</span> <span class="nx">error</span><span class="o">:</span> <span class="nx">use</span> <span class="nx">of</span> <span class="nx">deleted</span> <span class="kd">function</span> <span class="err">‘</span><span class="nx">Animal</span><span class="o">::</span><span class="nx">Animal</span><span class="p">(</span><span class="nx">Dog</span><span class="o">&amp;</span><span class="p">)</span><span class="err">’</span>
+<span class="nx">slicing</span><span class="p">.</span><span class="nx">cpp</span><span class="o">:</span><span class="mi">9</span><span class="o">:</span><span class="mi">5</span><span class="o">:</span> <span class="nx">error</span><span class="o">:</span> <span class="nx">declared</span> <span class="nx">here</span>
+<span class="nx">slicing</span><span class="p">.</span><span class="nx">cpp</span><span class="o">:</span><span class="mi">28</span><span class="o">:</span><span class="mi">10</span><span class="o">:</span> <span class="nx">error</span><span class="o">:</span>   <span class="nx">initializing</span> <span class="nx">argument</span> <span class="mi">1</span> <span class="nx">of</span> <span class="err">‘</span><span class="k">void</span> <span class="nx">Person</span><span class="o">::</span><span class="nx">feed</span><span class="p">(</span><span class="nx">Animal</span><span class="p">)</span><span class="err">’</span>
+</pre></div>
+</code></pre>
+<p>Now, add a new animal to my farm:</p>
+<pre><code><div class="highlight"><pre><span class="kr">class</span> <span class="nx">Cat</span>
+<span class="p">{</span>
+  <span class="kr">public</span><span class="o">:</span>
+    <span class="nx">virtual</span> <span class="k">void</span> <span class="nx">eat</span><span class="p">()</span>
+    <span class="p">{</span>
+      <span class="nx">std</span><span class="o">::</span><span class="nx">cout</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;Mmmm, fine little mice!&quot;</span> <span class="o">&lt;&lt;</span> <span class="nx">std</span><span class="o">::</span><span class="nx">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</code></pre>
+<p>Oh-oh, but to avoid slicing with <code>Cat</code> I need to open my base class:</p>
+<pre><code><div class="highlight"><pre><span class="kr">class</span> <span class="nx">Animal</span>
+<span class="p">{</span>
+  <span class="kr">public</span><span class="o">:</span>
+    <span class="nx">Animal</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="nx">Animal</span><span class="p">(</span><span class="nx">Dog</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
+    <span class="nx">Animal</span><span class="p">(</span><span class="nx">Cat</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
+<span class="p">...</span>
+</pre></div>
+</code></pre>
+<p>Bad news, and don&#39;t do that, because it violates the
+<a href="http://en.wikipedia.org/wiki/Open/closed_principle">Open-Closed</a> principle.</p>
+<p>(Or, imagine if you derive from a base class which is part of a framework, and you cannot
+modify it.)</p>
+<p>So then, what should I do in order to avoid slicing?</p>
+<p>If you can modify the base class, you can disable every copying:</p>
+<pre><code><div class="highlight"><pre><span class="kr">class</span> <span class="nx">Animal</span>
+<span class="p">{</span>
+  <span class="kr">public</span><span class="o">:</span>
+    <span class="nx">Animal</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="nx">Animal</span><span class="p">(</span><span class="nx">Animal</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
+<span class="p">...</span>
+</pre></div>
+</code></pre>
+<p>And if you still need to copy it, you can add a clone() function, which will do the
+copying... but it will be in another post...</p>
+</div><!-- Social sharing icons--><div class="social"><a href="https://twitter.com/share" class="twitter-share-button">Tweet</a><div data-size="medium" data-annotation="bubble" data-width="300" class="g-plusone"></div><!-- a(href="http://news.ycombinator.com/submit", class="hn-share-button") Vote on HN--></div><!-- Disqus comments, Make sure to replace `colinwren` with your account name in the Disqus helper script below--><div id="comments"><div id="disqus_thread"></div></div><!-- Helper scripts for social share icons--><!-- Hacker News--><script type="text/javascript">(function(d, t) {
+  var g = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+  g.src = '//hnbutton.appspot.com/static/hn.min.js';
+  s.parentNode.insertBefore(g, s);
+}(document, 'script'));
+</script><!-- Twitter--><script type="text/javascript">!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+</script><!-- Google Plus--><script type="text/javascript">(function() {
+  var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+  po.src = 'https://apis.google.com/js/plusone.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+})();
+</script><!-- Disqus--><script type="text/javascript">var disqus_shortname = 'susublog'; // Change this to your Disqus account name
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();</script></div><script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js" type="text/javascript"></script><script src="/scripts/main.js" type="text/javascript"></script><script>// Add your analytics code here</script></body></html>

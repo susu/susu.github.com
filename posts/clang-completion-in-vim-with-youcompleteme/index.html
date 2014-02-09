@@ -1,0 +1,80 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><link rel="icon" type="image/png" href="/images/cabin.png"><link href="/styles/main.css" rel="stylesheet"><title>Clang completion in vim with YouCompleteMe</title><meta name="description" content="How to set up VIM/clang completion"></head><body><nav><h1 class="name"><a href="/">Fragmented thoughts</a></h1><div class="menu icon-menu"></div><ul class="nav-links"><li class="text-link"><a href="/about.html">about</a></li><!-- li.text-link--><!--   a(href="#{data.baseUrl}projects.html") projects--><li class="text-link"><a href="/archives.html">archives</a></li></ul><div class="social-media"><a href="https://github.com/susu" class="icon-github"></a><!-- a.icon-twitter(href="https://twitter.com/colinwrenca")--></div></nav><div class="content"><div class="post-head group"><a href="/posts/clang-completion-in-vim-with-youcompleteme/"><h1 class="post-title">Clang completion in vim with YouCompleteMe</h1></a><span class="post-date">2014 &#183; 2 &#183; 9</span></div><div class="post-body markdown"><p><em>YouCompleteMe</em> is a plugin for vim. It requires <strong>vim</strong> with <strong>version 7.3.584 at least</strong> and <strong>with python2 support</strong>.
+You can check it:</p>
+<pre><code class="lang-bash"><div class="highlight"><pre><span class="nv">$ </span>vim --version
+</pre></div>
+</code></pre>
+<p>You should get a similar output. Look for the version number, and for a <code>+python</code>:</p>
+<pre><code><div class="highlight"><pre><span class="nx">VIM</span> <span class="o">-</span> <span class="nx">Vi</span> <span class="nx">IMproved</span> <span class="mf">7.4</span> <span class="p">(</span><span class="mi">2013</span> <span class="nx">Aug</span> <span class="mi">10</span><span class="p">,</span> <span class="nx">compiled</span> <span class="nx">Jan</span>  <span class="mi">7</span> <span class="mi">2014</span> <span class="mi">22</span><span class="o">:</span><span class="mi">31</span><span class="o">:</span><span class="mi">10</span><span class="p">)</span>
+<span class="nx">Included</span> <span class="nx">patches</span><span class="o">:</span> <span class="mi">1</span><span class="o">-</span><span class="mi">135</span>
+<span class="nx">Compiled</span> <span class="nx">by</span> <span class="nx">Arch</span> <span class="nx">Linux</span>
+<span class="nx">Huge</span> <span class="nx">version</span> <span class="kd">with</span> <span class="nx">GTK2</span> <span class="nx">GUI</span><span class="p">.</span>  <span class="nx">Features</span> <span class="nx">included</span> <span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="nx">or</span> <span class="nx">not</span> <span class="p">(</span><span class="o">-</span><span class="p">)</span><span class="o">:</span>
+<span class="p">...</span> <span class="nx">truncated</span> <span class="p">...</span>
+<span class="o">+</span><span class="nx">conceal</span>         <span class="o">+</span><span class="nx">libcall</span>         <span class="o">+</span><span class="nx">profile</span>         <span class="o">+</span><span class="nx">visualextra</span>
+<span class="o">+</span><span class="nx">cryptv</span>          <span class="o">+</span><span class="nx">linebreak</span>       <span class="o">+</span><span class="nx">python</span>          <span class="o">+</span><span class="nx">viminfo</span>
+<span class="o">+</span><span class="nx">cscope</span>          <span class="o">+</span><span class="nx">lispindent</span>      <span class="o">-</span><span class="nx">python3</span>         <span class="o">+</span><span class="nx">vreplace</span>
+<span class="o">+</span><span class="nx">cursorbind</span>      <span class="o">+</span><span class="nx">listcmds</span>        <span class="o">+</span><span class="nx">quickfix</span>        <span class="o">+</span><span class="nx">wildignore</span>
+<span class="o">+</span><span class="nx">cursorshape</span>     <span class="o">+</span><span class="nx">localmap</span>        <span class="o">+</span><span class="nx">reltime</span>         <span class="o">+</span><span class="nx">wildmenu</span>
+<span class="p">...</span> <span class="nx">truncated</span> <span class="p">...</span>
+</pre></div>
+</code></pre>
+<hr>
+<p>If you don&#39;t have such vim, you can re-compile it (<code>--with-python2</code>) or check if your distribution provides other
+vim packages. E.g. on Debian you can check <code>vim-nox</code>. On ArchLinux you can recompile via ABS (I had to).</p>
+<hr>
+<h2><a name="installing-with-vundle" class="anchor" href="#installing-with-vundle"><span class="header-link"></span></a>Installing with vundle</h2>
+<p>I highly recommend to use <a href="https://github.com/gmarik/Vundle.vim">Vundle</a>. It makes plugin-management super-easy with
+vim.</p>
+<p>Add to your <code>.vimrc</code>:</p>
+<pre><code><div class="highlight"><pre><span class="nx">Bundle</span> <span class="s1">&#39;Valloric/YouCompleteMe&#39;</span>
+</pre></div>
+</code></pre>
+<p>And run:</p>
+<pre><code class="lang-bash"><div class="highlight"><pre><span class="nv">$ </span>vim +BundleInstall
+</pre></div>
+</code></pre>
+<p>It may warn you, don&#39;t be scared:</p>
+<pre><code><div class="highlight"><pre><span class="nx">ycm_client_support</span><span class="p">.[</span><span class="nx">so</span><span class="o">|</span><span class="nx">pyd</span><span class="o">|</span><span class="nx">dll</span><span class="p">]</span> <span class="nx">and</span> <span class="nx">ycm_core</span><span class="p">.[</span><span class="nx">so</span><span class="o">|</span><span class="nx">pyd</span><span class="o">|</span><span class="nx">dll</span><span class="p">]</span> <span class="nx">not</span> <span class="nx">detected</span><span class="p">;</span>
+<span class="nx">you</span> <span class="nx">need</span> <span class="nx">to</span> <span class="nx">compile</span> <span class="nx">YCM</span> <span class="nx">before</span> <span class="nx">using</span> <span class="nx">it</span><span class="p">.</span> <span class="nx">Read</span> <span class="nx">the</span> <span class="nx">docs</span><span class="o">!</span>
+</pre></div>
+</code></pre>
+<p>Let&#39;s compile YCM modules! You can compile both YCM and clang, or you can use your system&#39;s libclang, and only compile
+YCM. I will elaborate only compiling both.</p>
+<p>Make sure you have <code>cmake</code>, <code>python-dev</code> installed.</p>
+<pre><code class="lang-bash"><div class="highlight"><pre><span class="nb">cd</span> ~/.vim/bundle/YouCompleteMe
+./install.sh --clang-completer
+</pre></div>
+</code></pre>
+<hr>
+<p>(It may take you awhile...drink a coffee or create more unit tests for your code!)</p>
+<hr>
+<p>In order to use YCM in a project, you have to set the compiler flags (especially include paths, but the same warning
+flags are useful as well). Since clang&#39;s flags are compatible with GCC&#39;s, you can use GCC flags.</p>
+<p>You have to provide a <code>.ycm_extra_conf.py</code> into your project&#39;s root (if there isn&#39;t already). Recommended to check
+it into your VCS so others can use it as well.</p>
+<p>There is a base one (recommended to use) in <code>.vim/bundle/YouCompleteMe/cpp/ycm/.ycm_extra_conf.py</code>
+All you have to do is provide the correct flags in the <code>flags</code> variable.</p>
+<h2><a name="known-issues" class="anchor" href="#known-issues"><span class="header-link"></span></a>Known Issues</h2>
+<p>At the time of writing there is a known issue about not loading .ycm_extra_conf.py: <a href="https://github.com/Valloric/YouCompleteMe/issues/615">Issue</a></p>
+<p>The workaround: add to .vimrc:</p>
+<pre><code class="lang-vim"><div class="highlight"><pre><span class="k">let</span> <span class="k">g</span>:ycm_confirm_extra_conf <span class="p">=</span> <span class="m">0</span>
+</pre></div>
+</code></pre>
+</div><!-- Social sharing icons--><div class="social"><a href="https://twitter.com/share" class="twitter-share-button">Tweet</a><div data-size="medium" data-annotation="bubble" data-width="300" class="g-plusone"></div><!-- a(href="http://news.ycombinator.com/submit", class="hn-share-button") Vote on HN--></div><!-- Disqus comments, Make sure to replace `colinwren` with your account name in the Disqus helper script below--><div id="comments"><div id="disqus_thread"></div></div><!-- Helper scripts for social share icons--><!-- Hacker News--><script type="text/javascript">(function(d, t) {
+  var g = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+  g.src = '//hnbutton.appspot.com/static/hn.min.js';
+  s.parentNode.insertBefore(g, s);
+}(document, 'script'));
+</script><!-- Twitter--><script type="text/javascript">!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+</script><!-- Google Plus--><script type="text/javascript">(function() {
+  var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+  po.src = 'https://apis.google.com/js/plusone.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+})();
+</script><!-- Disqus--><script type="text/javascript">var disqus_shortname = 'susublog'; // Change this to your Disqus account name
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();</script></div><script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js" type="text/javascript"></script><script src="/scripts/main.js" type="text/javascript"></script><script>// Add your analytics code here</script></body></html>
