@@ -1,132 +1,4 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><link rel="icon" type="image/png" href="/images/cabin.png"><link href="/styles/main.css" rel="stylesheet"><title>Fragmented thoughts</title></head><body><nav><h1 class="name"><a href="/">Fragmented thoughts</a></h1><div class="menu icon-menu"></div><ul class="nav-links"><li class="text-link"><a href="/about.html">about</a></li><!-- li.text-link--><!--   a(href="#{data.baseUrl}projects.html") projects--><li class="text-link"><a href="/archives.html">archives</a></li></ul><div class="social-media"><a href="https://github.com/susu" class="icon-github"></a><!-- a.icon-twitter(href="https://twitter.com/colinwrenca")--></div></nav><div class="content"><div class="post-head group"><a href="/posts/slicing/"><h1 class="post-title">Slicing</h1></a><span class="post-date">2013 &#183; 2 &#183; 11</span></div><div class="post-body markdown"><p>C++ has many pitfall. Developers should be aware of them.
-One of the pitfalls is <strong>slicing.</strong>
-Instead of giving a proper definition, I show it by example:</p>
-<pre><code><div class="highlight"><pre><span class="p">...</span>
-<span class="kr">class</span> <span class="nx">Animal</span>
-<span class="p">{</span>
-  <span class="kr">public</span><span class="o">:</span>
-    <span class="nx">virtual</span> <span class="k">void</span> <span class="nx">eat</span><span class="p">()</span>
-    <span class="p">{</span>
-      <span class="nx">std</span><span class="o">::</span><span class="nx">cout</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;Animal: eat!&quot;</span> <span class="o">&lt;&lt;</span> <span class="nx">std</span><span class="o">::</span><span class="nx">endl</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">};</span>
-
-<span class="kr">class</span> <span class="nx">Dog</span> <span class="o">:</span> <span class="kr">public</span> <span class="nx">Animal</span>
-<span class="p">{</span>
-  <span class="kr">public</span><span class="o">:</span>
-    <span class="nx">virtual</span> <span class="k">void</span> <span class="nx">eat</span><span class="p">()</span>
-    <span class="p">{</span>
-      <span class="nx">std</span><span class="o">::</span><span class="nx">cout</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;Dog: wrrrr, yummm!&quot;</span> <span class="o">&lt;&lt;</span> <span class="nx">std</span><span class="o">::</span><span class="nx">endl</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">};</span>
-
-
-<span class="c1">// ... a few lines later ...</span>
-
-<span class="nx">Dog</span> <span class="nx">frakk</span><span class="p">;</span>
-<span class="nx">frakk</span><span class="p">.</span><span class="nx">eat</span><span class="p">();</span>
-
-<span class="nx">Animal</span> <span class="nx">anim</span> <span class="o">=</span> <span class="nx">frakk</span><span class="p">;</span>
-<span class="nx">anim</span><span class="p">.</span><span class="nx">eat</span><span class="p">();</span>
-</pre></div>
-</code></pre>
-<p>Output of the code:</p>
-<pre><code><div class="highlight"><pre><span class="nx">Dog</span><span class="o">:</span> <span class="nx">wrrrr</span><span class="p">,</span> <span class="nx">yummm</span><span class="o">!</span>
-<span class="nx">Animal</span><span class="o">:</span> <span class="nx">eat</span><span class="o">!</span>
-</pre></div>
-</code></pre>
-<p>Whaat? Where we have created an <code>Animal</code> instance?
-Well, yes we did. When we created the <code>anim</code> variable the <code>frakk</code> has been
-implicitly casted to Animal. (<a href="http://en.wikipedia.org/wiki/Frakk">What</a> is frakk
-anyway?)</p>
-<p>Then you may say: &quot;okay, but why the heck should I declare a Dog and then copy it to
-Animal?&quot; And you are right. But check the following:</p>
-<pre><code><div class="highlight"><pre><span class="kr">class</span> <span class="nx">Person</span>
-<span class="p">{</span>
-  <span class="kr">public</span><span class="o">:</span>
-    <span class="k">void</span> <span class="nx">feed</span><span class="p">(</span><span class="nx">Animal</span> <span class="nx">a</span><span class="p">)</span>
-    <span class="p">{</span>
-      <span class="nx">a</span><span class="p">.</span><span class="nx">eat</span><span class="p">();</span>
-    <span class="p">}</span>
-<span class="p">};</span>
-
-<span class="p">...</span>
-<span class="nx">Dog</span> <span class="nx">frakk</span><span class="p">;</span>
-
-<span class="nx">Person</span> <span class="nx">me</span><span class="p">;</span>
-<span class="nx">me</span><span class="p">.</span><span class="nx">feed</span><span class="p">(</span><span class="nx">frakk</span><span class="p">);</span>
-</pre></div>
-</code></pre>
-<p>Or, even imagine it in a more messy context ...</p>
-<p>Okay, I don&#39;t want to let it happen. Let&#39;s delete the Animal&#39;s constructor with Dog
-parameter (C++11. In C++03 you could make it private, and not give a definition).</p>
-<pre><code><div class="highlight"><pre><span class="kr">class</span> <span class="nx">Dog</span><span class="p">;</span>
-
-<span class="kr">class</span> <span class="nx">Animal</span>
-<span class="p">{</span>
-  <span class="kr">public</span><span class="o">:</span>
-    <span class="nx">Animal</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
-    <span class="nx">Animal</span><span class="p">(</span><span class="nx">Dog</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
-    <span class="nx">virtual</span> <span class="k">void</span> <span class="nx">eat</span><span class="p">()</span>
-    <span class="p">{</span>
-      <span class="nx">std</span><span class="o">::</span><span class="nx">cout</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;Animal: eat!&quot;</span> <span class="o">&lt;&lt;</span> <span class="nx">std</span><span class="o">::</span><span class="nx">endl</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">};</span>
-
-<span class="kr">class</span> <span class="nx">Dog</span> <span class="o">:</span> <span class="kr">public</span> <span class="nx">Animal</span>
-<span class="p">{</span>
-  <span class="kr">public</span><span class="o">:</span>
-    <span class="nx">virtual</span> <span class="k">void</span> <span class="nx">eat</span><span class="p">()</span>
-    <span class="p">{</span>
-      <span class="nx">std</span><span class="o">::</span><span class="nx">cout</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;Dog: wrrrr, yummm!&quot;</span> <span class="o">&lt;&lt;</span> <span class="nx">std</span><span class="o">::</span><span class="nx">endl</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">};</span>
-</pre></div>
-</code></pre>
-<p>Cool, now my compiler is claiming about:</p>
-<pre><code><div class="highlight"><pre><span class="nx">slicing</span><span class="p">.</span><span class="nx">cpp</span><span class="o">:</span><span class="mi">47</span><span class="o">:</span><span class="mi">15</span><span class="o">:</span> <span class="nx">error</span><span class="o">:</span> <span class="nx">use</span> <span class="nx">of</span> <span class="nx">deleted</span> <span class="kd">function</span> <span class="err">‘</span><span class="nx">Animal</span><span class="o">::</span><span class="nx">Animal</span><span class="p">(</span><span class="nx">Dog</span><span class="o">&amp;</span><span class="p">)</span><span class="err">’</span>
-<span class="nx">slicing</span><span class="p">.</span><span class="nx">cpp</span><span class="o">:</span><span class="mi">9</span><span class="o">:</span><span class="mi">5</span><span class="o">:</span> <span class="nx">error</span><span class="o">:</span> <span class="nx">declared</span> <span class="nx">here</span>
-<span class="nx">slicing</span><span class="p">.</span><span class="nx">cpp</span><span class="o">:</span><span class="mi">28</span><span class="o">:</span><span class="mi">10</span><span class="o">:</span> <span class="nx">error</span><span class="o">:</span>   <span class="nx">initializing</span> <span class="nx">argument</span> <span class="mi">1</span> <span class="nx">of</span> <span class="err">‘</span><span class="k">void</span> <span class="nx">Person</span><span class="o">::</span><span class="nx">feed</span><span class="p">(</span><span class="nx">Animal</span><span class="p">)</span><span class="err">’</span>
-</pre></div>
-</code></pre>
-<p>Now, add a new animal to my farm:</p>
-<pre><code><div class="highlight"><pre><span class="kr">class</span> <span class="nx">Cat</span>
-<span class="p">{</span>
-  <span class="kr">public</span><span class="o">:</span>
-    <span class="nx">virtual</span> <span class="k">void</span> <span class="nx">eat</span><span class="p">()</span>
-    <span class="p">{</span>
-      <span class="nx">std</span><span class="o">::</span><span class="nx">cout</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;Mmmm, fine little mice!&quot;</span> <span class="o">&lt;&lt;</span> <span class="nx">std</span><span class="o">::</span><span class="nx">endl</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">};</span>
-</pre></div>
-</code></pre>
-<p>Oh-oh, but to avoid slicing with <code>Cat</code> I need to open my base class:</p>
-<pre><code><div class="highlight"><pre><span class="kr">class</span> <span class="nx">Animal</span>
-<span class="p">{</span>
-  <span class="kr">public</span><span class="o">:</span>
-    <span class="nx">Animal</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
-    <span class="nx">Animal</span><span class="p">(</span><span class="nx">Dog</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
-    <span class="nx">Animal</span><span class="p">(</span><span class="nx">Cat</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
-<span class="p">...</span>
-</pre></div>
-</code></pre>
-<p>Bad news, and don&#39;t do that, because it violates the
-<a href="http://en.wikipedia.org/wiki/Open/closed_principle">Open-Closed</a> principle.</p>
-<p>(Or, imagine if you derive from a base class which is part of a framework, and you cannot
-modify it.)</p>
-<p>So then, what should I do in order to avoid slicing?</p>
-<p>If you can modify the base class, you can disable every copying:</p>
-<pre><code><div class="highlight"><pre><span class="kr">class</span> <span class="nx">Animal</span>
-<span class="p">{</span>
-  <span class="kr">public</span><span class="o">:</span>
-    <span class="nx">Animal</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
-    <span class="nx">Animal</span><span class="p">(</span><span class="nx">Animal</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
-<span class="p">...</span>
-</pre></div>
-</code></pre>
-<p>And if you still need to copy it, you can add a clone() function, which will do the
-copying... but it will be in another post...</p>
-</div><div class="comments"><a href="/posts/slicing/#comments"><span class="icon-bubbles"></span>Comments</a></div><div class="post-head group"><a href="/posts/igloos-aliases/"><h1 class="post-title">igloo's aliases</h1></a><span class="post-date">2013 &#183; 1 &#183; 15</span></div><div class="post-body markdown"><p>Todays I&#39;ve discovered that in <a href="http://igloo-testing.org/">igloo</a> you can use
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><link rel="icon" type="image/png" href="/images/cabin.png"><link href="/styles/main.css" rel="stylesheet"><title>Fragmented thoughts</title></head><body><nav><h1 class="name"><a href="/">Fragmented thoughts</a></h1><div class="menu icon-menu"></div><ul class="nav-links"><li class="text-link"><a href="/about.html">about</a></li><!-- li.text-link--><!--   a(href="#{data.baseUrl}projects.html") projects--><li class="text-link"><a href="/archives.html">archives</a></li></ul><div class="social-media"><a href="https://github.com/susu" class="icon-github"></a><!-- a.icon-twitter(href="https://twitter.com/colinwrenca")--></div></nav><div class="content"><div class="post-head group"><a href="/posts/igloos-aliases/"><h1 class="post-title">igloo's aliases</h1></a><span class="post-date">2013 &#183; 1 &#183; 15</span></div><div class="post-body markdown"><p>Todays I&#39;ve discovered that in <a href="http://igloo-testing.org/">igloo</a> you can use
 alternate syntax for defining a context or a spec:</p>
 <p>Until now I&#39;ve written my tests similarly:</p>
 <pre><code><div class="highlight"><pre><span class="nx">Context</span><span class="p">(</span><span class="nx">an_XXX</span><span class="p">)</span>
@@ -153,4 +25,147 @@ alternate syntax for defining a context or a spec:</p>
 <p>In my opinion it is more BDD-ish syntax.</p>
 <p><strong>NOTE</strong>: for this I had to include <code>igloo/igloo_alt.h</code></p>
 <p>Anyway, you can find (or create) more alias in <code>igloo/core/alternativeregistrationaliases.h</code></p>
-</div><div class="comments"><a href="/posts/igloos-aliases/#comments"><span class="icon-bubbles"></span>Comments</a></div><div class="pagination group"><a href="/" class="newer">Newer &#8594;</a><a href="/page/2/" class="older">&#8592; Older</a></div></div><script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js" type="text/javascript"></script><script src="/scripts/main.js" type="text/javascript"></script><script>// Add your analytics code here</script></body></html>
+</div><div class="comments"><a href="/posts/igloos-aliases/#comments"><span class="icon-bubbles"></span>Comments</a></div><div class="post-head group"><a href="/posts/c-starter-kit/"><h1 class="post-title">C++ Starter Kit</h1></a><span class="post-date">2012 &#183; 12 &#183; 8</span></div><div class="post-body markdown"><p>I repeated many times my initial setup for any C++ project. I was
+always re-creating the same files... <em>src, include, test directories,
+integrating test framework into build system</em>...</p>
+<p>Of course with time, it&#39;s getting better (to my taste)
+(CMake, CxxTest, tup, igloo, ...). But these repetitions are violating
+DRY. That&#39;s the main reason why I started to piece together a starter kit.</p>
+<p>The other reason is to find a proper <em>mock framework</em>.
+At the moment I&#39;m playing with <a href="http://turtle.sourceforge.net">turtle</a>.</p>
+<p>The repository can be reached <a href="http://github.com/susu/cpp-starter-kit">here</a>,
+and the turtle integration is on a
+<a href="https://github.com/susu/cpp-starter-kit/tree/turtle">separate branch</a>.</p>
+<h2><a name="check-it-out" class="anchor" href="#check-it-out"><span class="header-link"></span></a>Check it out!</h2>
+<!-- **Be careful: this post may quickly became deprecated!** -->
+
+<h3><a name="1-clone-the-repository" class="anchor" href="#1-clone-the-repository"><span class="header-link"></span></a>1. Clone the repository</h3>
+<p>Of course the very first dependency is <code>git</code>.</p>
+<p>(if you don&#39;t have git, you can try it download as zip,
+but then you miss the submodules and need to download them manually)</p>
+<p>Because it&#39;s has some submodules (e.g. igloo), you need to clone it with <code>--recursive</code></p>
+<pre><code class="lang-bash"><div class="highlight"><pre><span class="nv">$ </span>git clone --recursive git://github.com/susu/cpp-starter-kit.git
+</pre></div>
+</code></pre>
+<p>In recursive mode git will also clone submodules, so you get my repo and all of
+its submodule. That means you can update the submodule separately.
+For example (in the toplevel of the working tree):</p>
+<pre><code class="lang-bash"><div class="highlight"><pre><span class="nv">$ </span>git submodule update <span class="nb">test</span>/igloo
+</pre></div>
+</code></pre>
+<h3><a name="2-compileem-all" class="anchor" href="#2-compileem-all"><span class="header-link"></span></a>2. Compile&#39;em all!</h3>
+<p>Another important dependency is <em>tup</em>. Tup is a very fast build system.
+I will not cover here the installation of tup, but for ArchLinux users:
+it can be installed via <a href="https://aur.archlinux.org/packages/tup-git/">AUR packages</a>.</p>
+<p>So we have tup, we have the cloned repo... let&#39;s build it.
+First you need to initialize your tup directory in your working tree, and then build:</p>
+<pre><code class="lang-bash"><div class="highlight"><pre><span class="nv">$ </span>tup init
+.tup repository initialized.
+<span class="nv">$ </span>tup upd
+</pre></div>
+</code></pre>
+<p>Then you should see the nice coloured progress of the build.</p>
+<p>This starter kit contains a dummy test example with a calculator</p>
+<h3><a name="3-addding-filesclasses-to-the-project" class="anchor" href="#3-addding-filesclasses-to-the-project"><span class="header-link"></span></a>3. Addding files/classes to the project</h3>
+<p>The tup build system using <code>Tupfile</code>-s as main files. There is no Tupfile in the
+root, only in <code>src/</code> and in <code>test/</code>. Only a <code>Tuprules.tup</code> file can be
+found in the root. This file contains all common stuff for Tupfiles.</p>
+<p>I don&#39;t want to deeply describe the tup system here, it has a pretty good
+<a href="http://gittup.org/tup/examples.html">documentation</a>.</p>
+<p>Let&#39;s see it in a more practical way: what if I want to add another class to the repo?</p>
+<p>I want to add a <code>Display</code> class which can show the result. Of course we are working
+in TDD, let&#39;s add test first: create a <code>TestDisplay.hpp</code> file in <code>test/</code>
+with the following content:</p>
+<pre><code class="lang-c++"><div class="highlight"><pre><span class="cp">#include &lt;igloo/igloo.h&gt;</span>
+
+<span class="cp">#include &lt;Display.hpp&gt;</span>
+
+<span class="n">Context</span><span class="p">(</span><span class="n">a_display</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">a_display</span><span class="p">()</span>
+    <span class="o">:</span> <span class="n">display</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+  <span class="p">{}</span>
+
+  <span class="kt">void</span> <span class="n">SetUp</span><span class="p">()</span>
+  <span class="p">{</span>
+    <span class="n">output</span><span class="p">.</span><span class="n">str</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="n">Spec</span><span class="p">(</span><span class="n">should_display_number</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="n">display</span><span class="p">.</span><span class="n">show</span><span class="p">(</span><span class="mi">123</span><span class="p">);</span>
+    <span class="n">Assert</span><span class="o">::</span><span class="n">That</span><span class="p">(</span> <span class="n">output</span><span class="p">.</span><span class="n">str</span><span class="p">(),</span> <span class="n">Contains</span><span class="p">(</span><span class="s">&quot;123&quot;</span><span class="p">));</span>
+  <span class="p">}</span>
+
+  <span class="n">std</span><span class="o">::</span><span class="n">ostringstream</span> <span class="n">output</span><span class="p">;</span>
+  <span class="n">Display</span> <span class="n">display</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</code></pre>
+<p>I will not cover igloo and BDD here. Context is something like test suites or test
+fixtures in other unit testing frameworks, and Spec is something like testcase.
+However to apply Context and Spec well, you may need to learn more about BDD.</p>
+<hr>
+<h5><a name="a-small-explanation-of-the-test" class="anchor" href="#a-small-explanation-of-the-test"><span class="header-link"></span></a>A small explanation of the test</h5>
+<p>Display&#39;s constructor accepts an <code>std::ostream</code> as an argument, the
+display will put numbers into. In the tests we are using an <code>std::ostringstream</code>
+for output, so it can be easily checked.</p>
+<hr>
+<p>We&#39;ve created the file, but not added to the system. In the <code>test/</code> directory there
+is a <code>test_runner.cpp</code>. You need to add an include:</p>
+<pre><code class="lang-c++"><div class="highlight"><pre><span class="cp">#include &quot;igloo/igloo.h&quot;</span>
+
+<span class="cp">#include &quot;TestCalculator.hpp&quot;</span>
+<span class="cp">#include &quot;TestDisplay.hpp&quot; </span><span class="c1">// added line</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="k">return</span> <span class="n">igloo</span><span class="o">::</span><span class="n">TestRunner</span><span class="o">::</span><span class="n">RunAllTests</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</code></pre>
+<p>Now compile, it should fail, because Display is unknown. Let&#39;s add it!
+(I will not show every step of TDD here, it isn&#39;t in focus right now.)</p>
+<p>In <code>include/</code> dir:</p>
+<pre><code class="lang-c++"><div class="highlight"><pre><span class="cp">#ifndef DISPLAY_HPP_INC</span>
+<span class="cp">#define DISPLAY_HPP_INC</span>
+
+<span class="cp">#include &lt;ostream&gt;</span>
+
+<span class="k">class</span> <span class="nc">Display</span>
+<span class="p">{</span>
+  <span class="nl">public:</span>
+    <span class="n">Display</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">out</span><span class="p">);</span>
+    <span class="kt">void</span> <span class="nf">show</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span>
+  <span class="nl">private:</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">m_out</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="cp">#endif</span>
+</pre></div>
+</code></pre>
+<p>Now compile, you should get <code>undefined reference</code> error, because
+definitions are missing:</p>
+<p>In <code>src/</code> dir:</p>
+<pre><code class="lang-c++"><div class="highlight"><pre><span class="cp">#include &lt;Display.hpp&gt;</span>
+
+<span class="n">Display</span><span class="o">::</span><span class="n">Display</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">out</span><span class="p">)</span>
+  <span class="o">:</span> <span class="n">m_out</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+<span class="p">{}</span>
+
+<span class="kt">void</span> <span class="n">Display</span><span class="o">::</span><span class="n">show</span><span class="p">(</span><span class="kt">int</span> <span class="n">result</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">m_out</span> <span class="o">&lt;&lt;</span> <span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</code></pre>
+<p>Note: all <code>.cpp</code> files in <code>src/</code> are built automatically.</p>
+<h2><a name="final-notes" class="anchor" href="#final-notes"><span class="header-link"></span></a>Final notes</h2>
+<ul>
+<li>You may noticed that it compiles a dynamic library, and there is no <code>main()</code>
+in the <em>so-called production code</em>, only in tests.</li>
+<li>It&#39;s not integrates any mock framework (yet)</li>
+</ul>
+<p>Anyway, feel free to fork it and modify to your taste!
+(Also if you fix some error, please send me a pull request!)</p>
+</div><div class="comments"><a href="/posts/c-starter-kit/#comments"><span class="icon-bubbles"></span>Comments</a></div><div class="pagination group"><a href="/" class="newer">Newer &#8594;</a></div></div><script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js" type="text/javascript"></script><script src="/scripts/main.js" type="text/javascript"></script><script>// Add your analytics code here</script></body></html>
