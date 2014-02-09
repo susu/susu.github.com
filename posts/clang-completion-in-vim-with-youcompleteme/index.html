@@ -47,6 +47,7 @@ YCM. I will elaborate only compiling both.</p>
 <hr>
 <p>(It may take you awhile...drink a coffee or create more unit tests for your code!)</p>
 <hr>
+<h2><a name="setting-up-for-a-project" class="anchor" href="#setting-up-for-a-project"><span class="header-link"></span></a>Setting up for a project</h2>
 <p>In order to use YCM in a project, you have to set the compiler flags (especially include paths, but the same warning
 flags are useful as well). Since clang&#39;s flags are compatible with GCC&#39;s, you can use GCC flags.</p>
 <p>You have to provide a <code>.ycm_extra_conf.py</code> into your project&#39;s root (if there isn&#39;t already). Recommended to check
@@ -59,6 +60,14 @@ All you have to do is provide the correct flags in the <code>flags</code> variab
 <pre><code class="lang-vim"><div class="highlight"><pre><span class="k">let</span> <span class="k">g</span>:ycm_confirm_extra_conf <span class="p">=</span> <span class="m">0</span>
 </pre></div>
 </code></pre>
+<h2><a name="syntastic" class="anchor" href="#syntastic"><span class="header-link"></span></a>Syntastic</h2>
+<p><a href="https://github.com/scrooloose/syntastic">Syntastic</a> is a real-time syntax checker. YouCompleteMe integrates very
+well with Syntastic.</p>
+<p>You can install with Vundle:</p>
+<pre><code><div class="highlight"><pre><span class="nx">Bundle</span> <span class="s1">&#39;scrooloose/syntastic&#39;</span>
+</pre></div>
+</code></pre>
+<p>Compile flags in <code>.ycm_extra_conf.py</code> must be set precisely if you want to avoid false positives/negatives.</p>
 </div><!-- Social sharing icons--><div class="social"><a href="https://twitter.com/share" class="twitter-share-button">Tweet</a><div data-size="medium" data-annotation="bubble" data-width="300" class="g-plusone"></div><!-- a(href="http://news.ycombinator.com/submit", class="hn-share-button") Vote on HN--></div><!-- Disqus comments, Make sure to replace `colinwren` with your account name in the Disqus helper script below--><div id="comments"><div id="disqus_thread"></div></div><!-- Helper scripts for social share icons--><!-- Hacker News--><script type="text/javascript">(function(d, t) {
   var g = d.createElement(t),
       s = d.getElementsByTagName(t)[0];
